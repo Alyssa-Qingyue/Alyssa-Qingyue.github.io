@@ -83,42 +83,36 @@ unet
 核心：编码再解码。
 先拼接特征，再加权采样，最后解码还原。
 图1.
-- 1 pipeline
-2.
-基本结构：初级版： （简单的特征融合与拼接）
-图1.
-- 2 basic
-3.
-升级结构U-net++（特征融合，能用全用，拼接全面，类比 densenet（cvpr- 2017
+
+<img width="1403" height="990" alt="0" src="https://github.com/user-attachments/assets/6606e36b-c447-4949-b419-c6625ee3b275" />
+2.基本结构：初级版： （简单的特征融合与拼接）
+图1.- 2 basic<img width="1003" height="736" alt="1结构" src="https://github.com/user-attachments/assets/05a51988-2707-47c8-8209-a720e5f6d0be" />
+3.升级结构U-net++（特征融合，能用全用，拼接全面，类比 densenet（cvpr- 2017
 bestpaper ）
 例如： 下采样卷积步长为 2， 升采样再加回去。
 每一层与前面所有层都有联系。
 deepsupervision 损失由多个位置计算，再更新
-# - 1 图1.
-3 upgrade
-1.
-2优势（原始及发展版本）
-1.
-overall：结构简单，速度快。
-医学分割领域应用广泛
-2.
-优化版：更容易剪枝（每一层都有输出结果，且有单独监督训练：想图的最边
+- 1 图1.3 upgrade
+- 1 pipeline<img width="1422" height="999" alt="2结构升级" src="https://github.com/user-attachments/assets/6fa61570-1ee9-4ebe-a9f5-fa54b229d991" />
+
+### 1.2优势（原始及发展版本）
+1.overall：结构简单，速度快。
+医学分割领域应用广泛<br>
+2.优化版：更容易剪枝（每一层都有输出结果，且有单独监督训练：想图的最边
 缘一斜列被去除了）
-# - 2 2模型架构：以医学细胞分析（小图像）为例
+## 2模型架构：以医学细胞分析（小图像）为例
 源代码支持： https://github.
 com/kuisu-GDUT/pytorch-cell-UNet.
 git
-## 2.
-- 1 unet 框架：实现基础 unet与unet++
+### 2.1 unet 框架：实现基础 unet与unet++
 概述：定义两个网络类；
 导入模块；
 输入输出
-重要函数：
-1.
-n_channels: 输入图像通道数（ e.
-gRGB=3, 灰度=1）
+重要函数：<br>
+1.n_channels: 输入图像通道数（ e.
+gRGB=3, 灰度=1）<br>
 2.
-n_classes: 分割的类别数
+n_classes: 分割的类别数<br>
 3.
 bilinear:上采样方式， true：双线性插值， false：转置卷积（转置卷积，就是普
 通卷积的“逆操作” ，用来把小的特征图还原成更大的图像，常用于图像生成
@@ -126,224 +120,191 @@ bilinear:上采样方式， true：双线性插值， false：转置卷积（转
 双线性插值：用周围 4个像素，按距离加权平均，来估算新像素值的
 一种图像缩放方法 .
 ）
-P(x,y)≈(x2−x)(y2−y)
+P(x,y)=(x2−x)(y2−y)
 (x2−x1)(y2−y1)Q11+(x−x1)(y2−y)
 (x2−x1)(y2−y1)Q21+(x2−x)(y−y1)
 (x2−x1)(y2−y1)Q12+(x−x1)(y−y1)
-(x2−x1)(y2−y1)Q- 22
-
-
-$$ (2.
-1) $$
-
-
+(x2−x1)(y2−y1)Q- 22<br>
 4.
-deep_supervision: 是否使用深度监督（多层输出）
-标准UNet类：
+deep_supervision: 是否使用深度监督（多层输出）<br>
+标准UNet类：<br>
 1.
 编码器（下采样） （共四层） ： DoubleConv ：两次卷积 +BN+ReLU;Down ：最大
-池化+DoubleConv
+池化+DoubleConv<br>
 2.
-解码器（上采样） （共四层） Up： 上采样+拼接（skipconnection ）+DoubleConv
+解码器（上采样） （共四层） Up： 上采样+拼接（skipconnection ）+DoubleConv<br>
 3.
-输出层：OutConv:1*- 1 卷积将通道数映射到类别数
-4.
-```
-forward过程： 一路下采样特征， 再上采样并与编码层特征拼接， 最后输出 logits
-（未经过 softmax/sigmoid ）
-NestedUNet （也叫U-Net++）
+输出层：OutConv:1*- 1 卷积将通道数映射到类别数<br>
+4.forward过程： 一路下采样特征， 再上采样并与编码层特征拼接， 最后输出 logits
+（未经过 softmax/sigmoid ）<br>
+NestedUNet （也叫U-Net++）<br>
 1.
-编码：和普通 unet类似
+编码：和普通 unet类似<br>
 2.
 解码：上采样＋多级跳越连接（第一层嵌套：用上采样深层特征来补充浅层
 第二层：不仅用对称层，还用中间层第三，四层：加入更多节点，在最浅层融
-合了来自不同深度和路径的信息）
+合了来自不同深度和路径的信息）<br>
 3.
-输出：多层输出，或者最后输出，看 deepsupervision
-# - 3 ## 2.
-2 unet 核心部件
+输出：多层输出，或者最后输出，看 deepsupervision<br>
+### 2.2 unet 核心部件
 DoubleConv ：两次卷积 +BN+ReLU
-1.
-两次卷积比一次卷积能提取更复杂的特征
+1.两次卷积比一次卷积能提取更复杂的特征<br>
 2.
-BN加快收敛、稳定训练
+BN加快收敛、稳定训练<br>
 3.
-RELU提供非线性能力
-Down下采样
+RELU提供非线性能力<br>
+Down下采样<br>
 1.
-Maxpool 减少尺寸
+Maxpool 减少尺寸<br>
 2.
-DoubleConv: 提取下采样特征
-UP上采样
+DoubleConv: 提取下采样特征<br>
+UP上采样<br>
 1.
-区分：双线性插值（ bilinear） ：轻量，但是通道数需要卷积调整
+区分：双线性插值（ bilinear） ：轻量，但是通道数需要卷积调整<br>
 2.
-反卷积（convtranspose2d(bilinear=false) 学习参数的上采样，计算更重）
+反卷积（convtranspose2d(bilinear=false) 学习参数的上采样，计算更重）<br>
 3.
-特别的：padding对齐+拼接上下采样：先计算上下 /左右差距；
-用 F.
-pad给小
-特征图补 0，和大的对齐；
-沿通道维度拼接
-OutConv 输出，1*1卷积压缩到目标通道数
-2.
-3其他问题（纯基础可不看）
-为什么最大池化有助于“看到更多特征” ？
+特别的：padding对齐+拼接上下采样：先计算上下 /左右差距；用 F.pad给小特征图补 0，和大的对齐；沿通道维度拼接OutConv 输出，1*1卷积压缩目标通道数<br>
+### 2.3其他问题（纯基础可不看）
+为什么最大池化有助于“看到更多特征” ？<br>
 1.
-扩大感受野：从更大范围提取特征
+扩大感受野：从更大范围提取特征<br>
 2.
-只保留最大值：保留最重要特征
+只保留最大值：保留最重要特征<br>
 3.
 减少冗余，防止过拟合：参数变小；
 保留关键特征，强泛化；
-噪声不敏感
+噪声不敏感<br>
 4.
-不止输出层！输出层全局平均池化，或直接全连接层
-# - 4 3数据处理与加载
-3.
-1数据处理
+不止输出层！输出层全局平均池化，或直接全连接层<br>
+## 3数据处理与加载
+### 3.1数据处理
 Pytorch自定义数据集类，加载图像和对应的分割掩码（常用于语义分割）读取图
-像和mask（确保一一对应）
+像和mask（确保一一对应）<br>
 1.
-basicdataset:transforms: 数据增强方法
+basicdataset:transforms: 数据增强方法<br>
 2.
-imagesd_ir 文件遍历去扩展名
-缩放、归一化、格式转换
+imagesd_ir 文件遍历去扩展名缩放、归一化、格式转换<br>
 1.
-转化为numpy数组格式
+转化为numpy数组格式<br>
 2.
 缩放：image_nearest: 最邻近插值， 保持 mask离散值不被破坏；
 image_bicubic:
-双三次插值，适合普通图像
+双三次插值，适合普通图像<br>
 3.
 通道调整：灰度图：扩展维度，变成 [1,H,W] ；
-彩色图：转为 [C,H,W] 格式
+彩色图：转为 [C,H,W] 格式<br>
 4.
 归一化【0，255】到【0，1】 、
-（可选）数据增强输出 pytorch可直接使用的 image，masktensorps ：加了一个 car-
-vanaDATASET 类专门处理车图分割吧啦吧啦
-3.
-2图像评估，损失函数
-dice系数,[0,1]
+（可选）数据增强输出 pytorch可直接使用的 image，masktensorps ：加了一个 carvanaDATASET 类专门处理车图分割吧啦吧啦<br>
+### 3.2图像评估，损失函数
+dice系数,[0,1]<br>
 1.
 公式：$$Dice = 2|A∩B|$$
-|A|+|B|
+|A|+|B|<br>
 2.
 遍历batch里面所有图并求平均
 多类别（multiclass ）dice：多类别分割（遍历所有类别通道） dice loss=1-dice Lou
-（交并比）
+（交并比）<br>
 1.
 公式：$$IoU = |A∩B|$$
-|A∪B|
+|A∪B|<br>
 2.
-sigmoid把模型输出转化为 0-1，阈值0.
-5，转二值 mask
+sigmoid把模型输出转化为 0-1，阈值0.5，转二值 mask<br>
 3.
 intersection ：交集像素数；
-union：并集像素数
+union：并集像素数<br>
 4.
-smooth：避免分母为 - 0
-# 5 3.
-3其他基础
-什么是车图分割？
+smooth：避免分母为 - 0<br>
+### 3.3其他基础
+什么是车图分割？<br>
 1.
 其实就是一种图像分割 (ImageSegmentation) 任务， 目标是把图像中属于“车”
-的像素和背景像素区分开来。
+的像素和背景像素区分开来。<br>
 2.
 CarvanaDataset 是对Carvana汽车数据集的封装，用来训练 U-Net之类的分割
-模型
-dice系数和lou系数的关系
-1.
-lou:关注交集在并集中的比例；
-dice：强调交集与整体大小的相对关系
+模型<br>
+dice系数和lou系数的关系<br>
+1.lou:关注交集在并集中的比例；
+dice：强调交集与整体大小的相对关系<br>
 2.
 Dice更敏感：当目标区域很小（例如医学影像中的小病灶） ， Dice对交集的比
-例会更“放大” ，所以更能反映模型在小目标上的表现。
+例会更“放大” ，所以更能反映模型在小目标上的表现。<br>
 3.
 IoU更严格：IoU要求交集在并集中的占比大，数值比 Dice更低，衡量标准
-更“苛刻” 。
+更“苛刻” 。<br>
 4.
-总结：dice：训练损失， lou：评价指标
-# - 6 4代码主体
-函数签名与依赖
+总结：dice：训练损失， lou：评价指标<br>
+## 4代码主体
+函数签名与依赖<br>
 1.
 net：分割模型（如 UNet/NestedUNet ） ，其forward返回通常是一个列表，这
-里取最后一个输出。
+里取最后一个输出。<br>
 2.
-dataloader ：验证集的 DataLoader ，每个batch返回’image’: Tensor,’mask’: Ten-
-sor。
+dataloader ：验证集的 DataLoader ，每个batch返回’image’: Tensor,’mask’: Tensor。<br>
 3.
 device：运行设备（ cuda或cpu） 。
 4.
-deep_supervision ：形参里有，但本函数里没有用到
-## 4.
-- 1 evaluate 工作流程
+deep_supervision ：形参里有，但本函数里没有用到<br>
+### 4.1 evaluate 工作流程
 1.
-建两个计量器，分别累计 Dice和IoU的加权平均。
+建两个计量器，分别累计 Dice和IoU的加权平均。<br>
 2.
 net.
-eval() ：切换到评估模式（关闭 Dropout、BatchNorm ） 。
+eval() ：切换到评估模式（关闭 Dropout、BatchNorm ） 。<br>
 3.
-记录验证批次数用于 tqdm进度条。
+记录验证批次数用于 tqdm进度条。<br>
 4.
-遍历验证集， one_hot，注意参数顺序，二分类 nclassws 设为- 2
+遍历验证集， one_hot，注意参数顺序，二分类 nclassws 设为2<br>
 5.
-no_grad下前向得到 mask_pred （取最后一个输出）
+no_grad下前向得到 mask_pred （取最后一个输出）<br>
 6.
-二分类：sigmoid+0.
-- 5 阈值；
-多分类： argmax+one_hot
+二分类：sigmoid+0.5 阈值；
+多分类： argmax+one_hot<br>
 7.
-计算Dice（多分类时忽略背景）与 IoU
+计算Dice（多分类时忽略背景）与 IoU<br>
 8.
-以batch大小为权重更新平均器
-## 4.
-- 2 predict 工作流程
+以batch大小为权重更新平均器<br>
+### 4.2 predict 工作流程
 其实是推理脚本，把训练好的 unet或者unet++应用到新图像上面 ,输出mask,
-结果保存成图像或者可视化展示
+结果保存成图像或者可视化展示<br>
 1.
 图像预处理： resize、归一化等。
-unsqueeze 加batch维度
+unsqueeze 加batch维度<br>
 2.
-前向推理
+前向推理<br>
 3.
 概率图（多分类 softmax；
-二分类 sigmoid）
+二分类 sigmoid）<br>
 4.
-resize回原图大小，阈值化 one_hot
+resize回原图大小，阈值化 one_hot<br>
 5.
 getargs定义运行时参数；
 输出文件名；
 masktoimage （二分类 0，1灰白;多分
-类argmax后按变好转灰度值）
-# - 7 6.
-主程序：eval(args.
-model_name) ：字符串变为类对象（灵活选择模型） ；
-加载
-权重
+类argmax后按变好转灰度值）<br>
+6.
+主程序：eval(args.model_name) ：字符串变为类对象（灵活选择模型） ；加载权重<br>
 7.
-循环处理每张图片
-4.
-3蒟蒻的其他问题
-one_hot
+循环处理每张图片<br>
+### 4.3蒟蒻的其他问题
+one_hot<br>
 1.
 把一个整数变成一个向量，这个向量的长度 =类别数，每个位置代表一个类
-别，只有对应类别的那一位是 1，其余都是 0。
+别，只有对应类别的那一位是 1，其余都是 0。<br>
 2.
 语义分割里的 one_hot: 输入图像标签通常为 [N,H,W](n 张batch，h*w尺寸)。
-onehot之后变成【 n,c,h,w】c=类别数
+onehot之后变成【 n,c,h,w】c=类别数<br>
 3.
 意义：和模型输出对齐；
-方便计算指标（如 dice，直接按通道做矩阵运算）
-前向传播为什么不计算梯度
+方便计算指标（如 dice，直接按通道做矩阵运算）<br>
+前向传播为什么不计算梯度<br>
 1.
-不需要反向传播，只前向计算得到结果
+不需要反向传播，只前向计算得到结果<br>
 2.
-节省显存；
-提速度
-eval是Python内置函数，它能把字符串当作代码执行
-# - 8 5代码主体： train.
-py
+节省显存；提速度<br>
+eval是Python内置函数，它能把字符串当作代码执行<br>
+## 5代码主体： train.py
 5.
 1准备数据
 1.

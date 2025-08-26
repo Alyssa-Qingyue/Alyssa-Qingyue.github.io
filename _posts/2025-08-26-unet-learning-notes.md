@@ -247,8 +247,7 @@ device：运行设备（ cuda或cpu） 。
 4.
 deep_supervision ：形参里有，但本函数里没有用到<br>
 ### 4.1 evaluate 工作流程
-1.
-建两个计量器，分别累计 Dice和IoU的加权平均。<br>
+1.建两个计量器，分别累计 Dice和IoU的加权平均。<br>
 2.
 net.
 eval() ：切换到评估模式（关闭 Dropout、BatchNorm ） 。<br>
@@ -305,110 +304,72 @@ onehot之后变成【 n,c,h,w】c=类别数<br>
 节省显存；提速度<br>
 eval是Python内置函数，它能把字符串当作代码执行<br>
 ## 5代码主体： train.py
-5.
-1准备数据
-1.
-数据增强：随机旋转 /翻转/对比度：提升泛化
-2.
-resize输入到input_h和w
-5.
-2造Dataloder
-1.
-构建数据集，切分
-2.
-特别的：droplast:丢弃最后一个不足 batch的批次
-5.
-3配置优化器 /调度器/损失
-1.
-本代码里面三种优化器任选（分割里 Adam/RMSprop 常见）
-2.
-调度器：ReduceLROnPlateau ： 指标 （这里用 dice） 提升停滞时降 LR。
-；
-CosineAn-
-nealingLR ：余弦退火，常用于 warm-up/ 平滑收敛。
-；
-MultiStepLR ：在里程碑
-epoch处乘以gamma衰减。
+### 5.1准备数据
+1.数据增强：随机旋转 /翻转/对比度：提升泛化<br>
+2.resize输入到input_h和w
+### 5.2造Dataloder
+1.构建数据集，切分<br>
+2.特别的：droplast:丢弃最后一个不足 batch的批次<br>
+### 5.3配置优化器 /调度器/损失
+1.本代码里面三种优化器任选（分割里 Adam/RMSprop 常见）<br>
+2.调度器：ReduceLROnPlateau ： 指标 （这里用 dice） 提升停滞时降 LR。；CosineAnnealingLR ：余弦退火，常用于 warm-up/ 平滑收敛。；MultiStepLR ：在里程碑epoch处乘以gamma衰减。<br>
+3.AMP混合精度： autocast+GradScaler ，提速、降显存。<br>
+### 5.4训练循环（含混合精度、指标、可视化、验证、保存）
+1.切换训练模式<br>
+2.遍历batch<br>
+(a)qianxiang+deepsupervision （把每个输出的损失加权求和） +损失<br>
+(b)反向+更新（AMP）<br>
+(c)记录/进度条<br>
+(d)训练中期验证（用之前的 evaluate）+调度器step<br>
+(e)保存checkpoint<br>
 3.
-AMP混合精度： autocast+GradScaler ，提速、降显存。
-5.
-4训练循环（含混合精度、指标、可视化、验证、保存）
-1.
-切换训练模式
-2.
-遍历batch
-(a)qianxiang+deepsupervision （把每个输出的损失加权求和） +损失
-(b)反向+更新（AMP）
-(c)记录/进度条
-(d)训练中期验证（用之前的 evaluate）+调度器step
-(e)保存checkpoint
-3.
-命令行参数（模型与数据，深监督，输入大小等）
+命令行参数（模型与数据，深监督，输入大小等）<br>
 4.
 main入口： 解析参数 →组装路径 （ dataset/imgs 、dataset/masks 、.
-/checkpoints ） 。
-；
-生成config[’name’] 并创建checkpoints/name 目录；
-把全部配置 yaml.
-dump 存
-到checkpoints/name/config.
-yml 。
-；
-设日志、设备。
-；
-Model=eval(config[’arch’])
-# - 9 动态选择 UNet或NestedUNet ，实例化：
+/checkpoints ） 。；生成config[’name’] 并创建checkpoints/name 目录；把全部配置 yaml.dump 存到checkpoints/name/config.yml 。；设日志、设备。Model=eval(config[’arch’])动态选择 UNet或NestedUNet ，实例化：<br>
 5.
 端到端数据流：图像 /掩码→dataset （增强，预处理） →dataloader→net.
-train
+train<br>
 循环：forward多可能输出 →CE+dice （ds加权求和） →AMP反传/更新→指
-标统计/W&B→ 周期性evaluate→ 调度器→每epoch存checkpoint
-5.
-5其他问题
-wandb：Weights&Biases
+标统计/W&B→ 周期性evaluate→ 调度器→每epoch存checkpoint<br>
+### 5.5其他问题
+wandb：Weights&Biases<br>
 1.
-实验管理与可视化平台
+实验管理与可视化平台<br>
 2.
 用途：记录超参数（学习率、批大小、优化器等） ；
 追踪指标（ loss,accuracy,
-IoU,Dice.
-.
-.
-） ；
-可视化训练曲线（ loss曲线、lr曲线、指标变化趋势） ；
-存储和
-管理模型权重；
-团队协作（多人实验对比）
-为什么构建数据集要优先使用车图分割数据？
+IoU,Dice） ；可视化训练曲线（ loss曲线、lr曲线、指标变化趋势） ；存储和管理模型权重；团队协作（多人实验对比）<br>
+为什么构建数据集要优先使用车图分割数据？<br>
 1.
 规模大；
 质量高；
 多样性强；
-实际价值高
+实际价值高<br>
 2.
 相比一些小众医疗分割 /自然分割数据，车图分割数据泛化性更强，优先级高
 shuffle=True ： 每个epoch开始时， 随机打乱数据顺序 →避免模型记住样本顺序， 减
 少过拟合。
 shuffle=False ：数据固定顺序，一般用于验证集 /测试集（保证结果可重
-复） 。
-超参数要记录哪些，分别有什么用
+复） 。<br>
+超参数要记录哪些，分别有什么用<br>
 1.
-学习率（lr） ：控制每次参数更新的步长
+学习率（lr） ：控制每次参数更新的步长<br>
 2.
-batchsize ：影响显存占用、收敛速度
+batchsize ：影响显存占用、收敛速度<br>
 3.
-优化器类型（ Adam,SGD,RMSprop 等）
+优化器类型（ Adam,SGD,RMSprop 等）<br>
 4.
-调度器策略（ CosineAnnealing,StepLR …）
+调度器策略（ CosineAnnealing,StepLR …）<br>
 5.
-epoch数量：训练轮次
+epoch数量：训练轮次<br>
 6.
-loss函数类型（ CE,Dice,BCEWithLogitsLoss 等）
+loss函数类型（ CE,Dice,BCEWithLogitsLoss 等）<br>
 7.
-数据增强方法（翻转、旋转、裁剪）
+数据增强方法（翻转、旋转、裁剪）<br>
 8.
 模型结构参数（深度监督、网络层数、是否使用 BN等）
 分割模型中三种常见的优化器；
-调度器 :主包还在学，过段时间出续集吧
-10
+调度器 :主包还在学，过段时间出续集吧<br>
+
 

@@ -4,7 +4,7 @@ title: Unet学习笔记
 subtitle: 入门保姆级代码精读
 gh-repo: Alyssa-Qingyue/Alyssa-Qingyue.github.io
 gh-badge: [star, fork, follow]
-tags: [unet][unet++]
+tags: [unet, "unet++"]
 comments: true
 mathjax: true
 author: Alyssa

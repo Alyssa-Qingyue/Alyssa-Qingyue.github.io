@@ -302,4 +302,10 @@ plugins:
 
 # Beautiful Jekyll / Dean Attali
 # 2fc73a3a967e97599c9763d05e564189
+# 背景图片配置
+background:
+  image: /assets/img/微信图片_20250827182653_9774_7.jpg
+  size: cover
+  position: center
+  repeat: no-repeat
 

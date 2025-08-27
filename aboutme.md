@@ -1,7 +1,7 @@
 ---
 layout: page
 title: About me
-subtitle: Where once I painted with colors, I now sculpt with code.
+subtitle: Once Tried Medicine, Now Practicing Programming (Side Effects May Vary)
 ---
 
 My name is Alyssa，Qingyue Chen in Chinese. I have the following qualities:

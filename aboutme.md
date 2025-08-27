@@ -4,7 +4,8 @@ title: About me
 subtitle: Once Tried Medicine, Now Practicing Programming (Side Effects May Vary)
 ---
 
-My name is Alyssa，Qingyue Chen in Chinese. I have the following qualities:
+My name is Alyssa，Qingyue Chen in Chinese. 
+What I do when I’m not coding：
 
 🎨 Painting — because sometimes colors speak louder than words.
 

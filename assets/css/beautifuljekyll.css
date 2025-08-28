@@ -95,6 +95,13 @@ a:focus {
   color: var(--hover-col);
 }
 
+.page-content, .post, .container {
+  background: rgba(0, 0, 0, 0.25); /* 改这里，数值越小越透明 */
+  color: white;  /* 确保文字在深色背景上可见 */
+  border-radius: 12px;
+  padding: 2rem;
+}
+
 blockquote {
   color: var(--mid-col);
   font-style: italic;

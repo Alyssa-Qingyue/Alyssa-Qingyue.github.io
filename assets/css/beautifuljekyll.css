@@ -88,17 +88,16 @@ a:focus {
   color: var(--hover-col);
 }
 
-.page-content, .post, .container {
-  background: rgba(0, 0, 0, 0.4);  /* 提高透明度，让背景更明显 */
-  color: white;
+/* 只给正文加独立背景 */
+.page-content {
+  background: rgba(255, 255, 255, 0.85); /* 半透明白底，和背景图对比更明显 */
+  color: black;   /* 文字改为黑色，保证可读性 */
   border-radius: 12px;
   padding: 2rem;
-
-  /* 控制内容区域不要太宽 */
-  max-width: 800px;   /* 你可以改成 700px / 900px 试试 */
-  margin: 2rem auto;  /* 居中 */
+  max-width: 800px;
+  margin: 2rem auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* 柔和阴影，浮起效果 */
 }
-
 
 blockquote {
   color: var(--mid-col);

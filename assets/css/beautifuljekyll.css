@@ -96,11 +96,16 @@ a:focus {
 }
 
 .page-content, .post, .container {
-  background: rgba(0, 0, 0, 0.15); /* 改这里，数值越小越透明 */
-  color: white;  /* 确保文字在深色背景上可见 */
+  background: rgba(0, 0, 0, 0.4);  /* 提高透明度，让背景更明显 */
+  color: white;
   border-radius: 12px;
   padding: 2rem;
+
+  /* 控制内容区域不要太宽 */
+  max-width: 800px;   /* 你可以改成 700px / 900px 试试 */
+  margin: 2rem auto;  /* 居中 */
 }
+
 
 blockquote {
   color: var(--mid-col);

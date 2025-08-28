@@ -1124,3 +1124,67 @@ pre {
     display: inline-block;
   }
 }
+/* === 全局背景优化 === */
+body {
+  background-image: url("/assets/img/background.png");
+  background-size: cover;           /* 拉伸填满 */
+  background-position: center;      /* 居中显示 */
+  background-attachment: fixed;     /* 滚动时固定 */
+  background-repeat: no-repeat;
+  color: var(--text-col);
+  font-family: var(--body-font);
+}
+
+/* === 主体内容毛玻璃效果 === */
+body > main {
+  background: rgba(255, 255, 255, 0.75);  /* 半透明白色 */
+  backdrop-filter: blur(10px);            /* 毛玻璃模糊 */
+  -webkit-backdrop-filter: blur(10px);    /* Safari 支持 */
+  border-radius: 12px;                    /* 圆角 */
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);/* 阴影 */
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 960px;                       /* 限制正文宽度 */
+}
+
+/* === 标题和文字优化 === */
+h1, h2, h3, h4, h5, h6 {
+  color: #222;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+p {
+  color: #333;
+}
+
+/* === 暗色模式适配 === */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-image: url("/assets/img/background.png");
+    background-color: #121212;   /* 背景打底，图片加载前不刺眼 */
+  }
+
+  body > main {
+    background: rgba(30, 30, 30, 0.75);   /* 深色半透明 */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: #eee;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: #fafafa;
+    text-shadow: 0 1px 4px rgba(0,0,0,0.6);
+  }
+
+  p {
+    color: #ddd;
+  }
+
+  a {
+    color: #80bfff;
+  }
+
+  a:hover {
+    color: #3399ff;
+  }
+}

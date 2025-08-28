@@ -30,9 +30,6 @@ html {
   font-size: 100%
 }
 
----
-# front matter 必须要有
----
 
 body {
   font-family: var(--body-font);
@@ -40,26 +37,17 @@ body {
   color: var(--text-col);
   position: relative;
 
-  /* 主题自带的背景色 */
+  /* 背景色（主题自带） */
   background-color: var(--page-col);
 
-  /* 背景图配置（你可以在 _config.yml 定义 site.page-img，或者写死路径） */
-  /*{% if site.page-img %}
-    background-image: url({{ site.page-img | relative_url }});
-  {% else %}
-    background-image: url("{{ '/assets/img/background.png' | relative_url }}");
-  {% endif %}
+  /* 背景图 */
+  background-image: url("{{ '/assets/img/background.png' | relative_url }}");
+  background-size: cover;       /* 铺满整个屏幕 */
+  background-repeat: no-repeat; /* 不重复 */
+  background-attachment: fixed; /* 页面滚动时背景固定 */
+  background-position: center;  /* 居中 */
+}
 
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;*/
-
-  background-image: url("/assets/img/background.png");
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  background-repeat: no-repeat;
 
   overflow-wrap: break-word;
   min-height: 100vh;

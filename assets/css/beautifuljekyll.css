@@ -44,12 +44,18 @@ body {
   background-color: var(--page-col);
 
   /* 背景图配置（你可以在 _config.yml 定义 site.page-img，或者写死路径） */
-  {% if site.page-img %}
+  /*{% if site.page-img %}
     background-image: url({{ site.page-img | relative_url }});
   {% else %}
     background-image: url("{{ '/assets/img/background.png' | relative_url }}");
   {% endif %}
 
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;*/
+
+  background-image: url("/assets/img/background.png");
   background-size: cover;
   background-position: center;
   background-attachment: fixed;

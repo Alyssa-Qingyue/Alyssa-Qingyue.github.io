@@ -46,9 +46,8 @@ body {
   background-repeat: no-repeat; /* 不重复 */
   background-attachment: fixed; /* 页面滚动时背景固定 */
   background-position: center;  /* 居中 */
-}
 
-
+  /* 额外设置 */
   overflow-wrap: break-word;
   min-height: 100vh;
 

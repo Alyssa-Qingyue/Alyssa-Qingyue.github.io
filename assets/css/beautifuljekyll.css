@@ -88,16 +88,63 @@ a:focus {
   color: var(--hover-col);
 }
 
-/* 只给正文加独立背景 */
-.page-content {
-  background: rgba(255, 255, 255, 0.85); /* 半透明白底，和背景图对比更明显 */
-  color: black;   /* 文字改为黑色，保证可读性 */
-  border-radius: 12px;
-  padding: 2rem;
-  max-width: 800px;
-  margin: 2rem auto;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* 柔和阴影，浮起效果 */
+/* ============================= */
+/* 自定义正文背景样式，覆盖Bootstrap */
+/* ============================= */
+
+/* 页面正文块，带半透明白色背景 */
+.page-content.container-md,
+.page-content.container-fluid {
+  background: rgba(255, 255, 255, 0.85); /* 半透明白底 */
+  color: black;                          /* 文字保证可读性 */
+  border-radius: 12px;                   /* 圆角 */
+  padding: 2rem;                         /* 内边距 */
+  max-width: 800px;                      /* 最大宽度 */
+  margin: 2rem auto;                     /* 居中，顶部/底部留白 */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);/* 阴影浮起效果 */
 }
+
+/* 调整正文段落 */
+.page-content.container-md p,
+.page-content.container-fluid p {
+  line-height: 1.6;
+  margin: 1rem 0;
+}
+
+/* 调整标题，保证在半透明背景下清晰 */
+.page-content.container-md h1,
+.page-content.container-md h2,
+.page-content.container-md h3,
+.page-content.container-md h4,
+.page-content.container-fluid h1,
+.page-content.container-fluid h2,
+.page-content.container-fluid h3,
+.page-content.container-fluid h4 {
+  color: black;  /* 标题同样保持黑色 */
+  margin-top: 1.25rem;
+  font-weight: 700;
+}
+
+/* 链接颜色 */
+.page-content.container-md a,
+.page-content.container-fluid a {
+  color: var(--link-col);
+}
+.page-content.container-md a:hover,
+.page-content.container-fluid a:hover {
+  color: var(--hover-col);
+}
+
+/* 引用块 */
+.page-content.container-md blockquote,
+.page-content.container-fluid blockquote {
+  color: var(--mid-col);
+  font-style: italic;
+  border-left: 4px solid var(--mid-col);
+  padding-left: 1rem;
+  margin: 1rem 0;
+}
+
 
 blockquote {
   color: var(--mid-col);

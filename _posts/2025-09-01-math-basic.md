@@ -9,6 +9,8 @@ comments: true
 mathjax: true
 author: Alyssa
 ---
+
+
 # 泰勒展开的函数逼近思想
 
 ## 1. 目标：用简单函数逼近复杂函数

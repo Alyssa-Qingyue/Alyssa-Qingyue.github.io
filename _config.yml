@@ -309,3 +309,6 @@ background:
   position: center
   repeat: no-repeat
 
+markdown: kramdown
+kramdown:
+  parse_block_html: true

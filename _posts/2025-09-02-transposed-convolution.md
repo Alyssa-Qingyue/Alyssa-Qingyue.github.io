@@ -24,5 +24,6 @@ $$
 $$
 W_{out} = (W_{in} - 1) \times stride[1] - 2 \times padding[1] + kernel\_size[1]
 $$
+<img width="850" height="890" alt="image" src="https://github.com/user-attachments/assets/f9734b73-d6e9-42c4-b02e-aa8ee9d2c839" />
 
 

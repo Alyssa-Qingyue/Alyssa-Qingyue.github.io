@@ -25,6 +25,7 @@ $$
 W_{out} = (W_{in} - 1) \times stride[1] - 2 \times padding[1] + kernel\_size[1]
 $$
 <img src="/assets/img/transposed_convolution1.png" alt="tr image" width="850" height="890">
+<img width="1398" height="796" alt="image" src="https://github.com/user-attachments/assets/2038ed8e-2a7e-4913-a29a-035235c30578" />
 
 
 

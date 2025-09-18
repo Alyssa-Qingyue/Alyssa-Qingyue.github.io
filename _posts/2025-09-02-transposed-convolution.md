@@ -14,7 +14,7 @@ author: Alyssa
 ResNet（Residual Network，残差网络）是由微软研究院提出的一种深度卷积神经网络结构，首次应用于 **ImageNet 2015** 图像识别竞赛中，取得了巨大的成功。其核心思想是通过 **残差结构（Residual Block）** 有效解决了深层网络中的梯度消失和梯度爆炸问题，从而使得网络能够训练到超过 **100 层** 甚至 **1000 层**。
 
 ---
-<img src="https://github.com/user-attachments/assets/91cc8680-5f3e-4219-b813-83326e31281c" alt="流程图" style="width:600px; height:auto;" />
+<img src="https://github.com/user-attachments/assets/91cc8680-5f3e-4219-b813-83326e31281c" alt="流程图" style="width:800px; height:auto;" />
 
 
 ## 1. ResNet 的整体结构

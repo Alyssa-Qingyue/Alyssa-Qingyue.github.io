@@ -148,16 +148,19 @@ class ResidualBlock(nn.Module):
         self.left = nn.Sequential(
             #下采样，后面有批归一化，卷积偏置可以省略
             nn.Conv2d(inchannel, outchannel, kernel_size=3, stride=stride, padding=1, bias=False),
+            #第一个卷积输出做二维归一化，加速收敛稳定训练
             nn.BatchNorm2d(outchannel),
             #inplace=True，就地修改以节省内存
             nn.ReLU(inplace=True),
             nn.Conv2d(outchannel, outchannel, kernel_size=3, stride=1, padding=1, bias=False),
             nn.BatchNorm2d(outchannel)
         )
+        #快捷通道
         self.right = shortcut
 
     def forward(self, x):
         residual = x if self.right is None else self.right(x)
+        #主路径与残差相加
         out = self.left(x) + residual
         return F.relu(out)
 
@@ -165,8 +168,11 @@ class ResidualBlock(nn.Module):
 class ResNet(nn.Module):
     def __init__(self, num_classes=1000):
         super(ResNet, self).__init__()
+        #前端预处理模块stem（大卷积+BN+ReLU+池化)
         self.pre = nn.Sequential(
             nn.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False),
+            #二维批归一化,专门为2
+d图像特征图设计，在每通道上面归一化（用于卷积层输出（N,C,H,W),普通BN1d用于全连接层的输出（N,D))
             nn.BatchNorm2d(64),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
@@ -176,6 +182,7 @@ class ResNet(nn.Module):
         self.layer2 = self._make_layer(inchannel=64, outchannel=128, block_num=4, stride=2)
         self.layer3 = self._make_layer(inchannel=128, outchannel=256, block_num=6, stride=2)
         self.layer4 = self._make_layer(inchannel=256, outchannel=512, block_num=3, stride=2)
+        #全连接层，将最后的通道维度映射到num_classes
         self.classifier = nn.Linear(512, num_classes)
 
     def _make_layer(self, inchannel, outchannel, block_num, stride, is_shortcut=True):
@@ -185,6 +192,7 @@ class ResNet(nn.Module):
                 nn.BatchNorm2d(outchannel)
             )
         else:
+            #恒等映射
             shortcut = None
 
         layers = []
@@ -192,7 +200,7 @@ class ResNet(nn.Module):
         for _ in range(1, block_num):
             layers.append(ResidualBlock(outchannel, outchannel))
         return nn.Sequential(*layers)
-
+  #resnet前向传播函数
     def forward(self, x):
         x = self.pre(x)
         x = self.layer1(x)
